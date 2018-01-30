@@ -1,0 +1,22 @@
+zip up a pdf
+
+creates:
+
+tar czf containers.tar.gz containers/
+
+f is file name
+z ip
+c compress
+containers/ is the source file
+
+
+tar tzf containers.tar.gz  listing the stuff inside
+
+tar xzf /* file name */  to unpack it 
+
+
+make file in slides
+
+
+
+
