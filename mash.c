@@ -1,10 +1,10 @@
 /* Norris Spencer
- * Leah Ruisenor
- *
- * TCSS 422
- * Winter 2018
- * Home Work 1: mash.c
- */
+* Leah Ruisenor
+*
+* TCSS 422
+* Winter 2018
+* Home Work 1: mash.c
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,97 +13,93 @@
 
 #define MAX_CHARS 255
 
-typedef struct {
- char * c1;
- char * c2;
- char * c3;
- char * theFile;
-} myargs;
+// typedef struct {
+//     char * c1;
+//     char * c2;
+//     char * c3;
+//     char * theFile;
+// } myArg;
 
+void mash(char cmnd1[], char cmnd2[], char cmnd3[], char file[]) {
 
-void mash( char cmnd1[], char cmnd2[], char cmnd3[], char file[] ) {
+    int p1;
+    int p2;
+    int p3;
 
-/*
+    /*
     p1 = fork();
     if (p1 == 0) // child
-        if (p1 > 0) // parent
+    if (p1 > 0) // parent
 
     p2 = fork();
     if (p2 == 0) // child
-        if (p2 > 0)
+    if (p2 > 0)
 
     p3 = fork();
     if (p3 == 0) // child
-        if (p3 > 0)
+    if (p3 > 0)
 
     wait(..)
-*/
+    */
 
-// print startments
+    // print startments
 
     // printf("-----LAUNCH CMD %d: %s", i, theCommand);
 
-    // printf("-"); // gonna have to be in a loop
+    for (int i = 0; i < 80; i++) {
+        printf("-"); // gonna have to be in a loop
+    }
+    printf("\n");
 
     // printf("CMD%d:[SHELL %d] STATUS CODE=-1\n", i);
 
     // printf("Result took:%d", timeMS);
 
-    // printf("Done waiting on children: %d %d %d\n", p1, p2, p3);
-
-    // printf("mash-%d>", i);
+    //printf("Done waiting on children: %d %d %d\n", p1, p2, p3);
 
 }
 
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
-    myargs a;
+    //myArg a;
 
-    char command[MAX_CHARS];    // max of 255 per command
-    int i = 1;
-    char ch;
+    char firstCommand[MAX_CHARS];
+    char secondCommand[MAX_CHARS];
+    char thirdCommand[MAX_CHARS];
+    char fileIn[MAX_CHARS];
+    char charIn;
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int l = 0;
 
-    /***********************************
-     * I think we should make a struct *
-     * for the args and then pass them *
-     * to the mash function.           *
-     ***********************************/
-
-    // read in the comand line
-    while (i < 5) {
-
-        if (i < 4) {
-            printf("mash-%d>", i);
-        } else {
-            printf("file>");
-        }
-
-        int j = 0;
-
-        while( (ch = fgetc(stdin) != '\n') ) {
-            command[j++] = ch;
-            // add to struct here
-        }
-        command[j] = '\0';     // get next command
-        i++;
-
-        // testing adding them to the struct here
-        a.c1 = "one";
-        a.c2 = "two";
-        a.c3 = "three";
-        a.theFile = "file";
+    printf("mash-1>");
+    while ((charIn = fgetc(stdin)) != '\n') {
+        firstCommand[i++] = charIn;
     }
+    firstCommand[i] = '\0';
 
-    printf("\nTesting:\n");
-    printf("command 1: %s\n", a.c1);
-    printf("command 2: %s\n", a.c2);
-    printf("command 3: %s\n", a.c3);
-    printf("the file name: %s\n", a.theFile);
+    printf("mash-2>");
+    while ((charIn = fgetc(stdin)) != '\n') {
+        secondCommand[j++] = charIn;
+    }
+    secondCommand[j] = '\0';
 
-    // // pass the args to the mash function call
-    // mash(a);
-    // mash(c1, c2, c3, theFile);
+    printf("mash-3>");
+    while ((charIn = fgetc(stdin)) != '\n') {
+        thirdCommand[k++] = charIn;
+    }
+    thirdCommand[k] = '\0';
+
+    printf("file>");
+    while ((charIn = fgetc(stdin)) != '\n') {
+        fileIn[l++] = charIn;
+    }
+    fileIn[l] = '\0';
+
+    // pass the args to the mash function call
+    mash(firstCommand, secondCommand, thirdCommand, fileIn);
 
     return 0;
 }
