@@ -20,11 +20,42 @@
 //     char * theFile;
 // } myArg;
 
-void mash(char cmnd1[], char cmnd2[], char cmnd3[], char file[]) {
+void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
 
     int p1;
     int p2;
     int p3;
+
+    int i = 0;
+
+    char *tempArgs[6]; // 5 args plus Null terminating char
+    char *tempChars = strtok(cmnd1, " "); // strtok ( char * str, const char * delimiters );
+
+    while(tempChars != '\0') {
+        tempArgs[i] = tempChars;
+        tempChars = strtok('\0', " ");
+        i++;
+    }
+
+    tempArgs[i] = strdup(file); // The strdup() function returns a pointer to a new string which is a duplicate of the string s.
+    tempArgs[i + 1] = '\0';     // have to add Null terminating char
+
+    //((to find the length of an array, use strlen(arr)))
+    //tempArgs[i] = strndup(file, (strlen(file) + 1));
+    printf("%s\n", tempArgs[0]);
+    printf("%s\n", tempArgs[1]);
+
+/*
+source: https://stackoverflow.com/questions/27541910/how-to-use-execvp
+char *cmd = "ls";
+char *argv[3];
+argv[0] = "ls";
+argv[1] = "-la";
+argv[2] = NULL;
+execvp(cmd, argv); //This will run "ls -la" as if it were a command
+*/
+
+    execvp(tempArgs[0], tempArgs);
 
     /*
     p1 = fork();
@@ -46,10 +77,10 @@ void mash(char cmnd1[], char cmnd2[], char cmnd3[], char file[]) {
 
     // printf("-----LAUNCH CMD %d: %s", i, theCommand);
 
-    for (int i = 0; i < 80; i++) {
-        printf("-"); // gonna have to be in a loop
-    }
-    printf("\n");
+    // for (int i = 0; i < 80; i++) {
+    //     printf("-"); // gonna have to be in a loop
+    // }
+    // printf("\n");
 
     // printf("CMD%d:[SHELL %d] STATUS CODE=-1\n", i);
 
