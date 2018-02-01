@@ -11,7 +11,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#define MAX_CHARS 255
+#define MAX_CHARS 255   // no more than 255 characters per line
+#define MAX_ARGS 6      // no more than 5 args plus Null terminating char
 
 // typedef struct {
 //     char * c1;
@@ -27,53 +28,87 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     int p3;
 
     int i = 0;
+    int k = 0;
+    int j = 0;
 
-    char *tempArgs[6]; // 5 args plus Null terminating char
-    char *tempChars = strtok(cmnd1, " "); // strtok ( char * str, const char * delimiters );
+    char *stf = strdup(file);   // strdup() returns a pointer to a new string which is a duplicate of the string s.
+                                // source: https://linux.die.net/man/3/strndup
+    char *tempArgs1[MAX_ARGS];
+    char *tempArgs2[MAX_ARGS];
+    char *tempArgs3[MAX_ARGS];
 
-    while(tempChars != '\0') {
-        tempArgs[i] = tempChars;
-        tempChars = strtok('\0', " ");
-        i++;
+    char *tempChars1 = strtok(cmnd1, " ");  // source: http://www.cplusplus.com/reference/cstring/strtok/
+    char *tempChars2 = strtok(cmnd2, " ");
+    char *tempChars3 = strtok(cmnd3, " ");
+
+    // ////////////////////
+    //     while(tempChars2 != '\0') {
+    //         tempArgs2[j] = tempChars2;
+    //         tempChars2 = strtok('\0', " ");
+    //         i++;
+    //     }
+    //     tempArgs2[j] = stf;
+    //     tempArgs2[j + 1] = '\0';
+    //     execvp(tempArgs2[0], tempArgs2);
+    //
+    // ///////////////////
+    //     while(tempChars3 != '\0') {
+    //         tempArgs3[k] = tempChars3;
+    //         tempChars3 = strtok('\0', " ");
+    //         i++;
+    //     }
+    //     tempArgs3[k] = stf;
+    //     tempArgs3[k + 1] = '\0';
+    //     execvp(tempArgs3[0], tempArgs3);
+
+
+    p1 = fork();
+
+    if (p1 == 0) {  // child
+
+        // doing the stuff
+        while(tempChars1 != '\0') {
+            tempArgs1[i] = tempChars1;
+            tempChars1 = strtok('\0', " ");
+            i++;
+        }
+        tempArgs1[i] = stf;
+        tempArgs1[i + 1] = '\0';          // have to add Null terminating char
+        execvp(tempArgs1[0], tempArgs1); // source: https://stackoverflow.com/questions/27541910/how-to-use-execvp
     }
 
-    tempArgs[i] = strdup(file); // The strdup() function returns a pointer to a new string which is a duplicate of the string s.
-    tempArgs[i + 1] = '\0';     // have to add Null terminating char
+    if (p1 > 0) {   // parent
 
-    //((to find the length of an array, use strlen(arr)))
-    //tempArgs[i] = strndup(file, (strlen(file) + 1));
-    printf("%s\n", tempArgs[0]);
-    printf("%s\n", tempArgs[1]);
+        p2 = fork();
 
-/*
-source: https://stackoverflow.com/questions/27541910/how-to-use-execvp
-char *cmd = "ls";
-char *argv[3];
-argv[0] = "ls";
-argv[1] = "-la";
-argv[2] = NULL;
-execvp(cmd, argv); //This will run "ls -la" as if it were a command
-*/
+        if (p2 == 0) {  // child
 
-    execvp(tempArgs[0], tempArgs);
+            // do the stuff
 
-    /*
-    p1 = fork();
-    if (p1 == 0) // child
-    if (p1 > 0) // parent
+        }
 
-    p2 = fork();
-    if (p2 == 0) // child
-    if (p2 > 0)
+        if (p2 > 0) {
 
-    p3 = fork();
-    if (p3 == 0) // child
-    if (p3 > 0)
+            p3 = fork();
 
-    wait(..)
-    */
+            if (p3 == 0) {  // child
 
-    // print startments
+                // do the stuff
+
+            }
+
+            if (p3 > 0) {
+                wait(NULL); //source: https://stackoverflow.com/questions/45666076/what-does-waitnull-do-in-this-case-and-what-is-the-output-of-the-program
+            }
+            wait(NULL);
+        }
+        wait(NULL);
+    }
+
+    printf("Done waiting on children: %d %d %d\n", p1, p2, p3);
+
+
+    // Print startments
 
     // printf("-----LAUNCH CMD %d: %s", i, theCommand);
 
@@ -85,9 +120,7 @@ execvp(cmd, argv); //This will run "ls -la" as if it were a command
     // printf("CMD%d:[SHELL %d] STATUS CODE=-1\n", i);
 
     // printf("Result took:%d", timeMS);
-
-    //printf("Done waiting on children: %d %d %d\n", p1, p2, p3);
-
+    
 }
 
 
