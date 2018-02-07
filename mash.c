@@ -1,18 +1,21 @@
 /* Norris Spencer
-* Leah Ruisenor
-*
-* TCSS 422
-* Winter 2018
-* Home Work 1: mash.c
-*/
+ * Leah Ruisenor
+ *
+ * TCSS 422
+ * Winter 2018
+ * Home Work 1: mash.c
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define MAX_CHARS 255   // no more than 255 characters per line
 #define MAX_ARGS 6      // no more than 5 args plus Null terminating char
+#define REMAIN_PRINT_PROMPT 61
 
 // typedef struct {
 //     char * c1;
@@ -31,70 +34,61 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     int k = 0;
     int j = 0;
 
-    char *stf = strdup(file);   // strdup() returns a pointer to a new string which is a duplicate of the string s.
+    char *stf = strdup(file);   // strdup() returns a pointer to a new string
+                                // which is a duplicate of the string s.
                                 // source: https://linux.die.net/man/3/strndup
     char *tempArgs1[MAX_ARGS];
     char *tempArgs2[MAX_ARGS];
     char *tempArgs3[MAX_ARGS];
 
-    char *tempChars1 = strtok(cmnd1, " ");  // source: http://www.cplusplus.com/reference/cstring/strtok/
+    // source: http://www.cplusplus.com/reference/cstring/strtok/
+    char *tempChars1 = strtok(cmnd1, " ");
     char *tempChars2 = strtok(cmnd2, " ");
     char *tempChars3 = strtok(cmnd3, " ");
 
-    // ////////////////////
-    //     while(tempChars2 != '\0') {
-    //         tempArgs2[j] = tempChars2;
-    //         tempChars2 = strtok('\0', " ");
-    //         i++;
-    //     }
-    //     tempArgs2[j] = stf;
-    //     tempArgs2[j + 1] = '\0';
-    //     execvp(tempArgs2[0], tempArgs2);
-    //
-    // ///////////////////
-    //     while(tempChars3 != '\0') {
-    //         tempArgs3[k] = tempChars3;
-    //         tempChars3 = strtok('\0', " ");
-    //         i++;
-    //     }
-    //     tempArgs3[k] = stf;
-    //     tempArgs3[k + 1] = '\0';
-    //     execvp(tempArgs3[0], tempArgs3);
-
-
     p1 = fork();
-
     if (p1 == 0) {  // child
-
-        // doing the stuff
-        while(tempChars1 != '\0') {
+        while(tempChars1 != NULL) {
             tempArgs1[i] = tempChars1;
-            tempChars1 = strtok('\0', " ");
+            tempChars1 = strtok(NULL, " ");
             i++;
         }
+        printf("-----LAUNCH CMD 1: %s\n", *tempArgs1);
+        //int remainDash = (REMAIN_PRINT_PROMPT - i);
+        //printf("Dashes to print 1: %i\n", remainDash);
         tempArgs1[i] = stf;
         tempArgs1[i + 1] = '\0';          // have to add Null terminating char
         execvp(tempArgs1[0], tempArgs1); // source: https://stackoverflow.com/questions/27541910/how-to-use-execvp
     }
-
     if (p1 > 0) {   // parent
-
         p2 = fork();
-
         if (p2 == 0) {  // child
-
-            // do the stuff
-
+            while(tempChars2 != NULL) {
+                tempArgs2[j] = tempChars2;
+                tempChars2 = strtok(NULL, " ");
+                i++;
+            }
+            printf("-----LAUNCH CMD 2: %s\n", *tempArgs2);
+            //int remainDash = (REMAIN_PRINT_PROMPT - i);
+            //printf("Dashes to print 2: %i\n", remainDash);
+            tempArgs2[j] = stf;
+            tempArgs2[j + 1] = '\0';
+            execvp(tempArgs2[0], tempArgs2);
         }
-
         if (p2 > 0) {
-
             p3 = fork();
-
             if (p3 == 0) {  // child
-
-                // do the stuff
-
+                while(tempChars3 != NULL) {
+                    tempArgs3[k] = tempChars3;
+                    tempChars3 = strtok(NULL, " ");
+                    i++;
+                }
+                printf("-----LAUNCH CMD 3: %s\n", *tempArgs3);
+                //int remainDash = (REMAIN_PRINT_PROMPT - i);
+                //printf("Dashes to print 3: %i\n", remainDash);
+                tempArgs3[k] = stf;
+                tempArgs3[k + 1] = '\0';
+                execvp(tempArgs3[0], tempArgs3);
             }
 
             if (p3 > 0) {
@@ -104,8 +98,10 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
         }
         wait(NULL);
     }
-
-    printf("Done waiting on children: %d %d %d\n", p1, p2, p3);
+    for (int l = 0; l < 8;l++) {
+        printf("----------");
+    }
+    printf("\nDone waiting on children: %d %d %d\n", p1, p2, p3);
 
 
     // Print startments
@@ -120,7 +116,7 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     // printf("CMD%d:[SHELL %d] STATUS CODE=-1\n", i);
 
     // printf("Result took:%d", timeMS);
-    
+
 }
 
 
