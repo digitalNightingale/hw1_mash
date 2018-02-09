@@ -43,16 +43,18 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     char *tempArgs3[MAX_ARGS];
 
     // source: http://www.cplusplus.com/reference/cstring/strtok/
-    char *tempChars1 = strtok(cmnd1, " ");
-    char *tempChars2 = strtok(cmnd2, " ");
-    char *tempChars3 = strtok(cmnd3, " ");
+    //char *tempChars1 = strtok(cmnd1, " ");
+    // char *tempChars2 = strtok(cmnd2, " ");
+    // char *tempChars3 = strtok(cmnd3, " ");
 
     p1 = fork();
-    if (p1 < 0) { // first fork failed
+    if (p1 < 0) {// first fork failed
         fprintf(stderr, "fork failed\n");
         exit(1); // exit
     }
-    else if (p1 == 0) {  // child
+    //else
+    if (p1 == 0) {  // child
+        char *tempChars1 = strtok(cmnd1, " ");
         if (cmnd1[0] != 0) {
             while(tempChars1 != NULL) {
                 tempArgs1[i] = tempChars1;
@@ -76,11 +78,13 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     }
     if (p1 > 0) {   // parent
         p2 = fork();
-        if (p2 < 0) { // second fork failed
+        if (p2 < 0) {// second fork failed
             fprintf(stderr, "fork failed\n");
             exit(1); // exit
         }
-        else if (p2 == 0) {  // child
+        //else
+        if (p2 == 0) {  // child
+            char *tempChars2 = strtok(cmnd2, " ");
             if (cmnd2[0] != 0) {
                 while(tempChars2 != NULL) {
                     tempArgs2[j] = tempChars2;
@@ -104,11 +108,12 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
         }
         if (p2 > 0) {
             p3 = fork();
-            if (p3 < 0) { // third fork failed
+            if (p3 < 0) {// third fork failed
                 fprintf(stderr, "fork failed\n");
                 exit(1); // exit
             }
-            else if (p3 == 0) {  // child
+            if (p3 == 0) {  // child
+                char *tempChars3 = strtok(cmnd3, " ");
                 if (cmnd3[0] != 0) {
                     while(tempChars3 != NULL) {
                         tempArgs3[k] = tempChars3;
@@ -153,9 +158,7 @@ int main(int argc, char *argv[]) {
     char thirdCommand[MAX_CHARS];
     char fileIn[MAX_CHARS];
     char charIn;
-    firstCommand[0] = 0;
-    secondCommand[0] = 0;
-    thirdCommand[0]= 0;
+
     int i = 0;
     int j = 0;
     int k = 0;
