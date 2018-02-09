@@ -1,10 +1,10 @@
 /* Norris Spencer
-* Leah Ruisenor
-*
-* TCSS 422
-* Winter 2018
-* Home Work 1: mash.c
-*/
+ * Leah Ruisenor
+ *
+ * TCSS 422
+ * Winter 2018
+ * Home Work 1: mash.c
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,13 +17,6 @@
 #define MAX_ARGS 6      // no more than 5 args plus Null terminating char
 #define REMAIN_PRINT_PROMPT 61
 
-// typedef struct {
-//     char * c1;
-//     char * c2;
-//     char * c3;
-//     char * theFile;
-// } myArg;
-
 void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
 
     int p1;
@@ -34,9 +27,15 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     int k = 0;
     int j = 0;
 
+    char tempCmnd1[MAX_CHARS];
+    char tempCmnd2[MAX_CHARS];
+    char tempCmnd3[MAX_CHARS];
+    strcpy(tempCmnd1, cmnd1);
+    strcpy(tempCmnd2, cmnd2);
+    strcpy(tempCmnd3, cmnd3);
     char *stf = strdup(file);   // strdup() returns a pointer to a new string
-    // which is a duplicate of the string s.
-    // source: https://linux.die.net/man/3/strndup
+                                // which is a duplicate of the string s.;
+                                // source: https://linux.die.net/man/3/strndup
     char *tempArgs1[MAX_ARGS];
     char *tempArgs2[MAX_ARGS];
     char *tempArgs3[MAX_ARGS];
@@ -46,89 +45,72 @@ void mash(char *cmnd1, char *cmnd2, char *cmnd3, char *file) {
     char *tempChars2 = strtok(cmnd2, " ");
     char *tempChars3 = strtok(cmnd3, " ");
 
-
     p1 = fork();
     if (p1 == 0) {  // child
-        //printf("\n-----LAUNCH CMD 1: ");
         while(tempChars1 != NULL) {
             tempArgs1[i] = tempChars1;
             tempChars1 = strtok(NULL, " ");
-            //printf("%s", tempArgs1[i]);
             i++;
         }
-        //printf("-----LAUNCH CMD 1: %s\n", *tempArgs1);
-        //int remainDash = (REMAIN_PRINT_PROMPT - i);
-        //printf("Dashes to print 1: %i\n", remainDash);
+        printf("-----LAUNCH CMD 1: %s", tempCmnd1);
+        int dashAmt1 = (REMAIN_PRINT_PROMPT - strlen(tempCmnd1));
+        while (dashAmt1 != 0) {
+            printf("-");
+            dashAmt1--;
+        }
+        printf("\n");
         tempArgs1[i] = stf;
-        tempArgs1[i + 1] = NULL;          // have to add Null terminating char
+        tempArgs1[i + 1] = '\0';         // have to add Null terminating char
         execvp(tempArgs1[0], tempArgs1); // source: https://stackoverflow.com/questions/27541910/how-to-use-execvp
-    }
-
-    if (p1 > 0) {   // correct 1 // parent
-        p2 = fork();
-
-        if (p2 == 0) { // correct 2  // child
-            //printf("\n-----LAUNCH CMD 2: ");
-            while(tempChars2 != NULL) {
-                tempArgs2[j] = tempChars2;
-                tempChars2 = strtok(NULL, " ");
-                //printf("%s", tempArgs2[j]);
-                j++; //here
+    } else if (p1 > 0) {   // parent
+		p2 = fork();
+	      if (p2 == 0) {  // child
+	          while(tempChars2 != NULL) {
+	              tempArgs2[j] = tempChars2;
+	              tempChars2 = strtok(NULL, " ");
+	              j++;
+	          }
+	          printf("-----LAUNCH CMD 2: %s\n", tempCmnd2);
+            int dashAmt2 = (REMAIN_PRINT_PROMPT - strlen(tempCmnd2));
+            while (dashAmt2 != 0) {
+                printf("-");
+            dashAmt2--;
             }
-            //int remainDash = (REMAIN_PRINT_PROMPT - i);
-            //printf("Dashes to print 2: %i\n", remainDash);
-            tempArgs2[j] = stf;
-            tempArgs2[j + 1] = NULL;
-            execvp(tempArgs2[0], tempArgs2);
-        } // correct 2
-
-        if (p2 > 0) { // correct 3
-            p3 = fork();
-
-            if (p3 == 0) { // correct 4  // child
-                while(tempChars3 != NULL) {
-                    tempArgs3[k] = tempChars3;
-                    tempChars3 = strtok(NULL, " ");
-                    //printf("\n-----LAUNCH CMD 3: %s", tempArgs3[k]);
-                    k++; //here
+	          tempArgs2[j] = stf;
+	          tempArgs2[j + 1] = '\0';
+	          execvp(tempArgs2[0], tempArgs2);
+	      } else if (p2 > 0) {
+	          p3 = fork();
+	          if (p3 == 0) {  // child
+	              while(tempChars3 != NULL) {
+	                  tempArgs3[k] = tempChars3;
+	                  tempChars3 = strtok(NULL, " ");
+	                  k++;
+	              }
+	              printf("-----LAUNCH CMD 3: %s\n", tempCmnd3);
+                int dashAmt3 = (REMAIN_PRINT_PROMPT - strlen(tempCmnd3));
+                while (dashAmt3 != 0) {
+                    printf("-");
+                dashAmt3--;
                 }
-                //printf("-----LAUNCH CMD 3: %s\n", *tempArgs3);
-                //int remainDash = (REMAIN_PRINT_PROMPT - i);
-                //printf("Dashes to print 3: %i\n", remainDash);
-                tempArgs3[k] = stf;
-                tempArgs3[k + 1] = NULL;
-                execvp(tempArgs3[0], tempArgs3);
-            } // correct 4
-
-            if (p3 > 0) { // correct 5
-                wait(NULL); //source: https://stackoverflow.com/questions/45666076/what-does-waitnull-do-in-this-case-and-what-is-the-output-of-the-program
-            } // correct 5
-            wait(NULL);
-        } // correct 3
-        wait(NULL);
-    } // correct 1
-    printf("\n");
+	              tempArgs3[k] = stf;
+	              tempArgs3[k + 1] = '\0';
+	              execvp(tempArgs3[0], tempArgs3);
+	          } else if (p3 > 0) {
+	              wait(NULL); //source: https://stackoverflow.com/questions/45666076/what-does-waitnull-do-in-this-case-and-what-is-the-output-of-the-program
+	          }
+	          wait(NULL);
+            for (int l = 0; l < 8;l++) {
+                printf("----------");
+            }
+	      }
+	      wait(NULL);
+	  }
     for (int l = 0; l < 8;l++) {
         printf("----------");
     }
-    if (p1 != 0 && p2 != 0 && p3 != 0) {
-        printf("\nDone waiting on children: %d %d %d\n", p1, p2, p3);
-    }
-    // Print startments
-
-    // printf("-----LAUNCH CMD %d: %s", i, theCommand);
-
-    // for (int i = 0; i < 80; i++) {
-    //     printf("-"); // gonna have to be in a loop
-    // }
-    // printf("\n");
-
-    // printf("CMD%d:[SHELL %d] STATUS CODE=-1\n", i);
-
-    // printf("Result took:%d", timeMS);
-
+    printf("\nDone waiting on children: %d %d %d\n", p1, p2, p3);
 }
-
 
 int main(int argc, char *argv[]) {
 
